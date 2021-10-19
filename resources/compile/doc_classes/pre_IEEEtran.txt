@@ -1,0 +1,17 @@
+\documentclass[journal]{IEEEtran}
+%#*%packages_
+
+%#*%commands_
+
+\begin{document}
+ 
+
+%#*%content_
+
+\bibliographystyle{ieeetran}
+\bibliography{temp}
+\end{document}
+
+
+
+

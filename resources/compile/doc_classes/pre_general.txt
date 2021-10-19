@@ -1,0 +1,17 @@
+\documentclass[%#*%parameters]{%#*%classname}
+%#*%packages_
+
+%#*%commands_
+
+\begin{document}
+ 
+
+%#*%content_
+
+\bibliographystyle{%#*%bibstyle}
+%#*%bib_
+\end{document}
+
+
+
+

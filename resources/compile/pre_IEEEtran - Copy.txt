@@ -1,0 +1,30 @@
+\documentclass[journal]{IEEEtran}
+\usepackage{amsmath}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage[pdftex]{graphicx}	
+\usepackage{color,soul}
+\usepackage{amsmath,array,graphicx}
+\usepackage{cite}
+\usepackage{multirow}
+
+\newcommand{\vecr}{\mathbf{E}}
+\newcommand{\matA}{\mathbf{A}}
+\newcommand{\vecE}{\mathbf{E}}
+\newcommand{\vecN}{\mathbf{N}}
+\newcommand{\vecNp}{\mathbf{\mathcal{N}}}
+\newcommand{\vecCNp}{\mathbf{\mathcal{C}}}
+\newcommand{\tz}{\tilde{\sigma}}
+\newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}}
+\let\oldnl\nl% Store \nl in \oldnl
+\newcommand{\nonl}{\renewcommand{\nl}{\let\nl\oldnl}}% Remove line number for one line
+\usepackage{balance}
+\begin{document}
+ 
+
+#*%content_
+
+\end{document}
+
+
+
+

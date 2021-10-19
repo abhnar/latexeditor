@@ -1,0 +1,8 @@
+\newcommand{\vecr}{\mathbf{E}}
+\newcommand{\matA}{\mathbf{A}}
+\newcommand{\vecE}{\mathbf{E}}
+\newcommand{\vecN}{\mathbf{N}}
+\newcommand{\vecNp}{\mathbf{\mathcal{N}}}
+\newcommand{\vecCNp}{\mathbf{\mathcal{C}}}
+\newcommand{\tz}{\tilde{\sigma}}
+\newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}}
