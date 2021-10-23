@@ -1,0 +1,200 @@
+\documentclass[]{article}
+\usepackage[pdftex]{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{color}
+\usepackage{multirow}
+
+\newcommand{\inv}[1]{#1^{-1}}
+\newcommand{\mat}[1]{\mathbf{#1}}
+
+%#*%commands_
+
+\begin{document}
+ 
+
+\title{SSFEM Matrix Equations}
+\maketitle
+
+\section{Equation}
+	The matrix system $Ax = b$ can be expanded as,
+	\begin{equation}
+		\begin{bmatrix}
+			c_{11}K & c_{12}T & \ldots & c_{1n}T\\
+			c_{21}T & c_{22}K & \ldots & c_{2n}T\\
+			c_{31}T & c_{32}T & \ldots & c_{3n}T\\
+			\vdots & \vdots  & \ddots & \vdots \\
+			c_{n1}T & c_{n2}T & \ldots & c_{nn}K\\
+		\end{bmatrix}
+		\begin{bmatrix}
+			d_1\\d_2\\d_3\\\vdots\\d_n
+		\end{bmatrix}
+		=
+		\begin{bmatrix}
+			b\\0\\0\\\vdots\\0
+		\end{bmatrix}
+	\end{equation}
+
+	\begin{align}
+	K = \mat{M} + \frac{\epsilon_r}{\sigma}\mat{T}\\
+	K = \mat{M} + \frac{\epsilon_r}{\sigma}\mat{T} - \mat{T} + \mat{T}\\
+	K = \mat{M} + \left(\frac{\epsilon_r}{\sigma}\mat{T}-1\right)+ \mat{T}\\
+	K = \mat{G} + \mat{T}
+	\end{align}
+
+	\begin{equation}
+		\begin{bmatrix}
+			c_{11}(G+T) & c_{12}T & \ldots & c_{1n}T\\
+			c_{21}T & c_{22}(F+T)  & \ldots & c_{2n}T\\
+			c_{31}T & c_{32}T & \ldots & c_{3n}T\\
+			\vdots & \vdots  & \ddots & \vdots \\
+			c_{n1}T & c_{n2}T & \ldots & c_{nn}(G+T) \\
+		\end{bmatrix}
+		\begin{bmatrix}
+			d_1\\d_2\\d_3\\\vdots\\d_n
+		\end{bmatrix}
+		=
+		\begin{bmatrix}
+			b\\0\\0\\\vdots\\0
+		\end{bmatrix}
+	\end{equation}
+
+	\begin{equation}
+		\left(\begin{bmatrix}
+			c_{11}G & 0 & \ldots & 0\\
+			0 & c_{22}G  & \ldots & 0\\
+			0 & 0& \ldots & 0\\
+			\vdots & \vdots  & \ddots & \vdots \\
+			0 & 0 & \ldots & c_{nn}G \\
+		\end{bmatrix}+
+		\begin{bmatrix}
+			c_{11}T & c_{12}T & \ldots & c_{1n}T\\
+			c_{21}T & c_{22}T  & \ldots & c_{2n}T\\
+			c_{31}T & c_{32}T & \ldots & c_{3n}T\\
+			\vdots & \vdots  & \ddots & \vdots \\
+			c_{n1}T & c_{n2}T & \ldots & c_{nn}T \\
+		\end{bmatrix}\right)
+		\begin{bmatrix}
+			d_1\\d_2\\d_3\\\vdots\\d_n
+		\end{bmatrix}
+		=
+		\begin{bmatrix}
+			b\\0\\0\\\vdots\\0
+		\end{bmatrix}
+	\end{equation}
+	
+	\begin{equation}
+		\left(\begin{bmatrix}
+			c_{11}G & 0 & \ldots & 0\\
+			0 & c_{22}G  & \ldots & 0\\
+			0 & 0& \ldots & 0\\
+			\vdots & \vdots  & \ddots & \vdots \\
+			0 & 0 & \ldots & c_{nn}G \\
+		\end{bmatrix}+
+		\begin{bmatrix}
+			c_{11}I & c_{12}I & \ldots & c_{1n}I\\
+			c_{21}I & c_{22}I  & \ldots & c_{2n}I\\
+			c_{31}I & c_{32}I & \ldots & c_{3n}I\\
+			\vdots & \vdots  & \ddots & \vdots \\
+			c_{n1}I & c_{n2}I & \ldots & c_{nn}I \\
+		\end{bmatrix}
+		\begin{bmatrix}
+			T & 0 & \ldots & 0\\
+			0 & T & \ldots & 0\\
+			0 & 0 & \ldots & 0\\
+			\vdots & \vdots  & \ddots & \vdots \\
+			0& 0 & \ldots & T\\
+		\end{bmatrix}
+		\right)
+		\begin{bmatrix}
+			d_1\\d_2\\d_3\\\vdots\\d_n
+		\end{bmatrix}
+		=
+		\begin{bmatrix}
+			b\\0\\0\\\vdots\\0
+		\end{bmatrix}
+	\end{equation}
+
+
+	
+\section{Roughwork}
+	\begin{align}
+		c_{11}Kd_1 + c_{12}Td_2 + \ldots + c_{1n}Td_n &= b\\
+		c_{21}Td_1 + c_{22}Kd_2 + \ldots + c_{2n}Td_n &= 0\\
+		c_{31}Td_1 + c_{32}Td_2 + \ldots + c_{3n}Td_n &= 0\\
+		&\vdots\\
+		c_{n1}Td_1 + c_{n2}Td_2 + \ldots + c_{nn}Kd_n &= 0
+	\end{align}
+
+	\begin{align}
+		c_{11}Kd_1 + c_{12}Td_2 &= b\\
+		c_{21}Td_1 + c_{22}Kd_2 + c_{23}Td_3 &= 0\\
+		c_{32}Td_2 + c_{33}Kd_3 + c_{34}Td_4 &= 0\\
+		c_{43}Td_3 + c_{44}Kd_4 + c_{45}Td_5 &= 0\\
+		&\vdots\\
+		c_{k,k-1}Td_{k-1} + c_{k,k}Kd_k + c_{k,k+1}Td_{k+1} &= 0\\
+		&\vdots\\
+		c_{n,n-1}Td_{n-1} + c_{n,n}Kd_n  &= 0
+	\end{align}
+
+
+	\begin{equation}
+		\begin{bmatrix}
+			c_{11}I & c_{12}K^{-1}T & \ldots & c_{1n}K^{-1}T\\
+			c_{21}K^{-1}T & c_{22}I & \ldots & c_{2n}K^{-1}T\\
+			c_{31}K^{-1}T & c_{32}K^{-1}T & \ldots & c_{3n}K^{-1}T\\
+			\vdots & \vdots  & \ddots & \vdots \\
+			c_{n1}K^{-1}T & c_{n2}K^{-1}T & \ldots & c_{nn}I\\
+		\end{bmatrix}
+		\begin{bmatrix}
+			d_1\\d_2\\d_3\\\vdots\\d_n
+		\end{bmatrix}
+		=
+		\begin{bmatrix}
+			K^{-1}b=x\\0\\0\\\vdots\\0
+		\end{bmatrix}
+	\end{equation}
+
+	\begin{equation}
+		\begin{bmatrix}
+			c_{11}I & c_{12}G & \ldots & c_{1n}G\\
+			c_{21}G & c_{22}I & \ldots & c_{2n}G\\
+			c_{31}G& c_{32}G & \ldots & c_{3n}G\\
+			\vdots & \vdots  & \ddots & \vdots \\
+			c_{n1}G & c_{n2}G & \ldots & c_{nn}I\\
+		\end{bmatrix}
+		\begin{bmatrix}
+			d_1\\d_2\\d_3\\\vdots\\d_n
+		\end{bmatrix}
+		=
+		\begin{bmatrix}
+			x\\0\\0\\\vdots\\0
+		\end{bmatrix}
+	\end{equation}
+	\begin{align}
+	c_{n,n-1}Gd_{n-1} + c_{nn}Id_n = 0\\
+	c_{n,n-1}Gd_{n-1} = -c_{nn}Id_n \\
+	d_n = -\frac{c_{n,n-1}}{c_{nn}}Gd_{n-1}
+	\end{align}
+
+	\begin{align}
+	c_{n-1,n-2}Gd_{n-2}  + c_{n-1,n-1}Id_{n-1} + c_{n-1,n}Gd_n = 0\\
+	c_{n-1,n-2}Gd_{n-2}  + c_{n-1,n-1}Id_{n-1} + c_{n-1,n}G-\frac{c_{n,n-1}}{c_{nn}}Gd_{n-1} = 0\\
+	c_{n-1,n-2}Gd_{n-2}  + c_{n-1,n-1}Id_{n-1} - G^2\frac{c_{n-1,n}c_{n,n-1}}{c_{nn}}d_{n-1} = 0\\
+	\frac{c_{n-1,n-2}}{c_{n-1,n-1}}Gd_{n-2}  + Id_{n-1} - G^2\frac{c_{n-1,n}c_{n,n-1}}{c_{n-1,n-1}c_{nn}}d_{n-1} = 0\\
+	\frac{c_{n-1,n-2}}{c_{n-1,n-1}}Gd_{n-2}  + \left(I - G^2\frac{c_{n-1,n}c_{n,n-1}}{c_{n-1,n-1}c_{nn}}\right)d_{n-1} = 0\\
+	\frac{c_{n-1,n-2}}{c_{n-1,n-1}}Gd_{n-2}  + \left(I + Gq\right)\left(I - Gq\right)d_{n-1} = 0\\
+	\end{align}
+
+	\begin{align}
+	c_{n-2,n-3}Gd_{n-3}  + c_{n-2,n-2}Id_{n-2} + c_{n-2,n-1}Gd_{n-1} = 0\\
+	c_{n-2,n-3}Gd_{n-3}  + c_{n-2,n-2}Id_{n-2} - c_{n-2,n-1} \frac{c_{nn}}{c_{n,n-1}}Id_n = 0\\
+	\end{align}
+
+\bibliographystyle{ieeetr}
+%#*%bib_
+\end{document}
+
+
+
+

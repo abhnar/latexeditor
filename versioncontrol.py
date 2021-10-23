@@ -27,6 +27,7 @@ class database():
              filename            TEXT   ,
              filename_Ver        CHAR(500) NOT NULL,
              version_Date         DATE, 
+             comment            TEXT   ,
              PRIMARY KEY (Version, filename_Ver));''')
             print("Table VERSIONS Created")
         except:
@@ -63,7 +64,7 @@ class database():
 
         '''
 
-    def create_version(self, fname):
+    def create_version(self, fname, comment):
         now = datetime.now()
         dt_string = now.strftime("%d-%m-%Y_%H-%M-%S")
         dt_string1 = now.strftime("%Y-%m-%d")
@@ -71,8 +72,8 @@ class database():
         ver = self.getLatestVersion(fname)+1
 
 
-        cmd  = f"INSERT INTO VERSIONS (Version,filename,filename_Ver,version_Date) \
-                    VALUES ({ver}, '{fname}', '{ver_fname}','{dt_string1}' )"
+        cmd  = f"INSERT INTO VERSIONS (Version,filename,filename_Ver,version_Date, comment) \
+                    VALUES ({ver}, '{fname}', '{ver_fname}','{dt_string1}','{comment}' )"
 
         self.conn.execute(cmd);
         self.conn.commit()
@@ -136,6 +137,9 @@ class database():
                 mx = row[0]
         return mx
     def getVersion(self, fname, ver):
+        cursor = self.conn.execute(f"SELECT filename_Ver,version_Date, comment from VERSIONS where filename = '{fname}' and Version = {ver}")
+        for row in cursor:
+            return row
         print(f"SELECT filename_Ver from VERSIONS where filename = '{fname} and Version = {ver}'")
         cursor = self.conn.execute(f"SELECT filename_Ver from VERSIONS where filename = '{fname}' and Version = {ver}")
         for row in cursor:
@@ -221,6 +225,7 @@ class versionWindow(QWidget):
 
         self.texEditor = LatexEditor()  
         self.bibEditor = LatexEditor(type = 'bib', bc ='#103841')
+        self.pkgEditor = LatexEditor(type = 'bib', bc ='#103841')
 
 
         self.tabs = QTabWidget()
@@ -231,23 +236,30 @@ class versionWindow(QWidget):
         self.tabs.resize(300,200)
         self.tabs.addTab(self.tab1,"Latex")
         self.tabs.addTab(self.tab2,"Bibtex")
+        self.tabs.addTab(self.tab3,"Pakcage")
         
         self.tab1.layout = QVBoxLayout()
         self.tab2.layout = QVBoxLayout()
+        self.tab3.layout = QVBoxLayout()
         
         
 
         self.tab1.layout.addWidget(self.texEditor )
         self.tab2.layout.addWidget(self.bibEditor )
+        self.tab3.layout.addWidget(self.pkgEditor )
 
         self.tab1.setLayout(self.tab1.layout)
         self.tab2.setLayout(self.tab2.layout)
+        self.tab3.setLayout(self.tab3.layout)
 
         self.list = QListWidget()
         self.list.setMaximumWidth(200)
         self.list.currentItemChanged.connect(self.selectionChanged)
+
+        self.comment_label = QLabel("Comment: ")
         wd2hbox.addWidget(self.list)
         wd2hbox.addWidget(self.tabs)
+        wd2vbox.addWidget(self.comment_label)
         wd2vbox.addLayout(wd2hbox)
         self.btn = QPushButton("Back")
         wd2vbox.addWidget(self.btn)
@@ -274,23 +286,35 @@ class versionWindow(QWidget):
         ver =int(index.sibling(index.row(),1).data())
         print(value)
         self.list.clear()
-        for i in range(ver):
+        for i in reversed(range(ver)):
             self.list.addItem('Version '+ str(i+1))
         self.list.setCurrentItem(self.list.item(0))
         self.file = value
 
         db= database()
         db.open()
-        verfname = db.getVersion(value,1)
+        verfname = db.getVersion(value,ver)
         db.close()
-
-        with open('./texversions/'+ verfname +'.tex', 'r') as f:
+        self.comment_label.setText('Comment [' + verfname[1] +'] : ' + verfname[2] )
+        with open('resources/texversions/'+ verfname[0] +'.pax', 'r') as f:
             tex = f.read()
-        self.texEditor.setText(tex)
+        self.setData(tex)
 
         self.Stack.setCurrentIndex(1)
     def showPage1(self):
         self.Stack.setCurrentIndex(0)
+    def setData(self,data):
+        data = data.split("<<*#tex_seperator*#>>")
+        self.texEditor.setText(data[0].strip())
+        self.bibEditor.setText(data[1].strip())
+        self.pkgEditor.setText(data[2].strip())
+
+        self.doc_class = data[3].strip()
+        self.bibsyle = data[4].strip()
+        self.doc_params = data[5].strip()
+        self.toCopy = data[6].strip()
+        
+        
 
     def selectionChanged(self):
         ver = self.list.currentItem()
@@ -303,11 +327,10 @@ class versionWindow(QWidget):
         verfname = db.getVersion(self.file,ver)
         db.close()
         if not (verfname == None):
-            with open('./texversions/'+ verfname +'.pax', 'r') as f:
+            self.comment_label.setText('Comment [' + verfname[1] +'] : ' + verfname[2] )
+            with open('resources/texversions/'+ verfname[0] +'.pax', 'r') as f:
                 intext = f.read()
-            tex = intext.split("<<*#tex_seperator*#>>" )
-            self.texEditor.setText(tex[0])
-            self.bibEditor.setText(tex[1])
+            setData(intext)
 
 
         

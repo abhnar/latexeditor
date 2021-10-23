@@ -6,6 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+# Pax
+*.pax
+*.log
+*.db
+
 # Distribution / packaging
 .Python
 build/

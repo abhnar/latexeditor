@@ -449,7 +449,9 @@ class EditorMainWindow(QMainWindow):
         self.openfolder.setText("&Open Folder")
         self.openfolder.setIcon(QIcon("resources/icons/file-explorer.png"))
         
-        
+        self.createVersion = QAction(self)
+        self.createVersion.setText("&Create Version")
+        #self.createVersion.setIcon(QIcon("resources/icons/draft.png"))
 
         self.createDraft = QAction(self)
         self.createDraft.setText("&Create Draft")
@@ -485,6 +487,7 @@ class EditorMainWindow(QMainWindow):
         self.fileToolBar.addAction(self.selectedTex)
         self.fileToolBar.addSeparator()
         self.fileToolBar.addWidget(self.spacer)
+        self.fileToolBar.addAction(self.createVersion)
         self.fileToolBar.addAction(self.createDraft)
         self.fileToolBar.addAction(self.openfolder)
         self.fileToolBar.addAction(self.viewVersions)
@@ -534,6 +537,7 @@ class EditorMainWindow(QMainWindow):
         self.openfolder.triggered.connect(self.openExplorer)
         self.createDraft.triggered.connect(self.createNewDraft)
         self.findAction.triggered.connect(self.findTextDialog)
+        self.createVersion.triggered.connect(self.updateVersion)
 
     def findTextDialog(self):
         importlib.reload(find)
@@ -722,7 +726,7 @@ class EditorMainWindow(QMainWindow):
             with open(self.file + ".pax", 'r') as f:
                 intext = f.read()
 
-            tex = intext.split("<<*#tex_seperator*#>>")
+            #tex = intext.split("<<*#tex_seperator*#>>")
             self.setData(intext, file)
             #print(tex[3])
 
@@ -769,7 +773,7 @@ class EditorMainWindow(QMainWindow):
         f.write(outtext)
         f.close()
         
-        self.updateVersion(outtext)
+        #self.updateVersion()
 
     
     
@@ -800,14 +804,30 @@ class EditorMainWindow(QMainWindow):
             f.write(outtext)
             f.close()
             
-            self.updateVersion(outtext)
+            #self.updateVersion()
 
-    def updateVersion(self, outtext =''):
+    def updateVersion(self):
+        text, ok = QInputDialog.getText(self, 'Input Dialog', 'Enter text:')
+        if ok:
+            comment = str(text)
+        else:
+            return
+        
+        tex = self.texEditor.text().replace('\r','')
+        
+        bib=self.bibEditor.text().replace('\r','')
+        
+        pkg = self.pkgEditor.text().replace('\r','')
+       
+        outtext = tex + " <<*#tex_seperator*#>>" + bib + " <<*#tex_seperator*#>>"  + pkg + " <<*#tex_seperator*#>>"  \
+            + self.doc_class + " <<*#tex_seperator*#>>"+ self.bibsyle  + " <<*#tex_seperator*#>>" + \
+            self.doc_params  + " <<*#tex_seperator*#>>" + self.toCopy + ' '
+
         db = database();
             
         db.open()
         
-        ver_fname = db.create_version(self.file)
+        ver_fname = db.create_version(self.file, comment)
         db.close()
         var_fname = 'resources/texversions/'+ ver_fname
 
@@ -819,6 +839,7 @@ class EditorMainWindow(QMainWindow):
         self.original_text_tex = self.texEditor.text()
         self.original_text_bib = self.bibEditor.text()
         self.original_text_pkg = self.pkgEditor.text()
+        self.labelStatus.setText("Created verion " + var_fname)
 
 
 
