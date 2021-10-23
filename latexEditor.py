@@ -788,12 +788,7 @@ class EditorMainWindow(QMainWindow):
 
             bib=self.bibEditor.text().replace('\r','')
             
-            
             pkg = self.pkgEditor.text().replace('\r','')
-
-           
-
-         
 
             outtext = tex + " <<*#tex_seperator*#>>" + bib + " <<*#tex_seperator*#>>"  + pkg + " <<*#tex_seperator*#>>"  \
             + self.doc_class + " <<*#tex_seperator*#>>"+ self.bibsyle  + " <<*#tex_seperator*#>>" + \
@@ -831,6 +826,9 @@ class EditorMainWindow(QMainWindow):
         db.close()
         var_fname = 'resources/texversions/'+ ver_fname
 
+        if not (os.path.isfile('resources/texversions/')):
+            os.mkdir('resources/texversions/')
+            
         f = open(var_fname +".pax", "w")
         f.write(outtext)
         f.close()

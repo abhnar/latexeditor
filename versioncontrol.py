@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 import sqlite3
 from datetime import date, datetime
 from SyntaxHighightEditors import LatexEditor
+import os
 
 class database():
     def open(self):
@@ -296,9 +297,16 @@ class versionWindow(QWidget):
         verfname = db.getVersion(value,ver)
         db.close()
         self.comment_label.setText('Comment [' + verfname[1] +'] : ' + verfname[2] )
-        with open('resources/texversions/'+ verfname[0] +'.pax', 'r') as f:
-            tex = f.read()
-        self.setData(tex)
+        if not (verfname == None):
+            if not (os.path.isfile('resources/texversions/'+ verfname[0] +'.pax')):
+                    self.comment_label.setText('This file is deleted from physical media')
+                    self.texEditor.setText('')
+                    self.bibEditor.setText('')
+                    self.pkgEditor.setText('')
+                    return
+            with open('resources/texversions/'+ verfname[0] +'.pax', 'r') as f:
+                tex = f.read()
+            self.setData(tex)
 
         self.Stack.setCurrentIndex(1)
     def showPage1(self):
@@ -327,10 +335,16 @@ class versionWindow(QWidget):
         verfname = db.getVersion(self.file,ver)
         db.close()
         if not (verfname == None):
+            if not (os.path.isfile('resources/texversions/'+ verfname[0] +'.pax')):
+                self.comment_label.setText('This file is deleted from physical media')
+                self.texEditor.setText('')
+                self.bibEditor.setText('')
+                self.pkgEditor.setText('')
+                return
             self.comment_label.setText('Comment [' + verfname[1] +'] : ' + verfname[2] )
             with open('resources/texversions/'+ verfname[0] +'.pax', 'r') as f:
                 intext = f.read()
-            setData(intext)
+            self.setData(intext)
 
 
         
