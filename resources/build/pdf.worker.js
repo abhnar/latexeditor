@@ -1082,13 +1082,13 @@ function getVerbosityLevel() {
 
 function info(msg) {
   if (verbosity >= VerbosityLevel.INFOS) {
-    console.log(`Info: ${msg}`);
+    //console.log(`Info: ${msg}`);
   }
 }
 
 function warn(msg) {
   if (verbosity >= VerbosityLevel.WARNINGS) {
-    console.log(`Warning: ${msg}`);
+    //console.log(`Warning: ${msg}`);
   }
 }
 
@@ -55700,7 +55700,7 @@ class XFAFactory {
       this.form = new _bind.Binder(this.root).bind();
       this.pages = this.form[_xfa_object.$toHTML]();
     } catch (e) {
-      console.log(e);
+      //console.log(e);
     }
   }
 
@@ -64086,7 +64086,7 @@ class Data extends _xfa_object.XFAObject {
 
 class Debug extends _xfa_object.XFAObject {
   constructor(attributes) {
-    super(CONFIG_NS_ID, "debug", true);
+    super(CONFIG_NS_ID, "debug", false);
     this.uri = null;
   }
 

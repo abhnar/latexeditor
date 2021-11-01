@@ -337,6 +337,12 @@ Contents:
 	\addcontentsline{toc}{chapter}{#1}
 	\markboth{#1}{#1}}
 
+\def\keywords{\prefacesection{Keywords}}
+\def\notations{\prefacesection{Notation and Abbreviations}}
+\def\acknowledgements{\prefacesection{Acknowledgements}}
+\def\vita{\prefacesection{Vita}}
+\def\publications{\prefacesection{Publications based on this Thesis}}
+
 \def\makecontents{\newpage
 	\begin{singlespace}
 	\tableofcontents

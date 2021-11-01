@@ -1562,7 +1562,7 @@ const PDFViewerApplication = {
     this.metadata = metadata;
     this._contentDispositionFilename ?? (this._contentDispositionFilename = contentDispositionFilename);
     this._contentLength ?? (this._contentLength = contentLength);
-    console.log(`PDF ${pdfDocument.fingerprint} [${info.PDFFormatVersion} ` + `${(info.Producer || "-").trim()} / ${(info.Creator || "-").trim()}] ` + `(PDF.js: ${_pdfjsLib.version || "-"})`);
+    //console.log(`PDF ${pdfDocument.fingerprint} [${info.PDFFormatVersion} ` + `${(info.Producer || "-").trim()} / ${(info.Creator || "-").trim()}] ` + `(PDF.js: ${_pdfjsLib.version || "-"})`);
     let pdfTitle = info?.Title;
     const metadataTitle = metadata?.get("dc:title");
 
@@ -8309,7 +8309,7 @@ class PDFScriptingManager {
           break;
 
         case "println":
-          console.log(value);
+          //console.log(value);
           break;
 
         case "zoom":
@@ -14069,7 +14069,7 @@ document.webL10n = function (window, document, undefined) {
       var dict = getL10nDictionary();
 
       if (dict && dict.locales && dict.default_locale) {
-        console.log('using the embedded JSON directory, early way out');
+        //console.log('using the embedded JSON directory, early way out');
         gL10nData = dict.locales[lang];
 
         if (!gL10nData) {
@@ -14089,7 +14089,7 @@ document.webL10n = function (window, document, undefined) {
 
         callback();
       } else {
-        console.log('no resource to load, early way out');
+        //console.log('no resource to load, early way out');
       }
 
       gReadyState = 'complete';
@@ -14546,7 +14546,7 @@ document.webL10n = function (window, document, undefined) {
         return gL10nData[arg];
       }
 
-      console.log('argument {{' + arg + '}} for #' + key + ' is undefined.');
+      //console.log('argument {{' + arg + '}} for #' + key + ' is undefined.');
       return matched_text;
     });
   }

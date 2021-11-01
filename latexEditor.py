@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
 from SyntaxHighightEditors import LatexEditor
 
 from versioncontrol import database, versionWindow ,queryWindow          
@@ -22,6 +22,9 @@ import subprocess
 import re
 import traceback
 
+class MyWebView(QWebEngineView):
+    def javaScriptConsoleMessage(a,b,d):
+        print('')
 class Worker(QObject):
 
     finished = pyqtSignal(int)
@@ -171,7 +174,7 @@ class EditorMainWindow(QMainWindow):
         self.tab3.setLayout(self.tab3.layout)
         
         
-        self.webEngineView = QWebEngineView()
+        self.webEngineView = MyWebView ()
         self.webEngineView.load(QUrl('about::blank'))
 
         splitter1 = QSplitter(Qt.Horizontal)
@@ -205,8 +208,66 @@ class EditorMainWindow(QMainWindow):
     ''''''
 
     def precompileTex(self):
+
+        idx = self.file.rfind('/')
+        directory = self.file[0:idx]
+        directory = directory+'/'
         
-        text = self.texEditor.text()
+        #text = self.texEditor.text()
+        self.inc_bib = ''
+        self.inc_pkg = ''
+
+        txt = self.texEditor.text()
+        include = re.findall(r"\\include\{(.*?)\}",txt)
+        
+        for r in include:
+            
+            pos  = [(m.start(0), m.end(0))  for m in re.finditer(r"\\include{"+ r +"}", txt)]
+            print(r"\\include{"+ r +"}", pos[0])
+            #
+            indx = txt.rfind('\n',0,pos[0][0])
+            
+            fl = (txt[indx:pos[0][0]]).strip()
+            print(fl)
+
+
+            if not fl.startswith('%'):
+                with open(directory+ r+'.pax','r') as f:
+                    inc_txt = f.read()
+
+                data = inc_txt.split("<<*#tex_seperator*#>>")
+                #self.texEditor.setText(data[0].strip())
+                #self.bibEditor.setText(data[1].strip())
+                #self.pkgEditor.setText(data[2].strip())
+                txt = txt.replace(r"\include{"+ r +"}",data[0])
+                self.inc_bib = self.inc_bib +  data[1].strip()
+                self.inc_pkg = self.inc_pkg +  data[2].strip()
+
+
+        x = self.inc_bib.split('@');
+        self.bib_list = {}
+        self.bib_merged = {}
+        for i in x:
+            if i.strip() == '' or i == None:
+                continue
+            j = i.split(',')
+            entry = (j[0].split('{')[1].strip())
+            #print('Here:',entry,i)
+            if not entry in self.bib_list.keys():
+                self.bib_list[entry]='@'+i
+                self.bib_merged[entry] = '@'+i
+            else:
+                print('Here:', self.bib_list[entry])
+                print('Here1:', self.bib_merged[entry])
+                self.bib_merged[entry] = self.bib_merged[entry]+'@'+i
+
+        
+        
+        #self.texEditor.setText(txt)
+        self.inc_tex = txt
+        text = txt
+
+
         r1 = re.findall(r"\\cite\{(.*?)\}",text)
         pos = [(m.start(0)) for m in re.finditer(r"\\cite\{(.*?)\}",text)]
         vals = []
@@ -216,7 +277,7 @@ class EditorMainWindow(QMainWindow):
                for rrr in rr:
                       if not rrr in vals:
                              vals.append(rrr.strip())
-        bibtext = self.bibEditor.text()
+        bibtext = self.bibEditor.text() + self.inc_bib
         cite_error = False
         cnt = 0
         for cite in vals:
@@ -252,14 +313,17 @@ class EditorMainWindow(QMainWindow):
             logging.debug("Compilation Error")
             return
         f = open(self.worker.directory + "temp.log", "r")
-        self.log = f.read()
+        log = f.read()
+        
         f.close()
         
         
    
         self.cleanTemp(self.worker.directory)
-        log = self.worker.log
+        
         idx = log.find('!')
+        print('index',idx)
+        
         if idx >-1:
             print('Exception')
             self.webEngineView.load(QUrl('about::blank'))
@@ -267,7 +331,7 @@ class EditorMainWindow(QMainWindow):
             #print([ord(c) for c in log[idx:idx_end]])
             #print([c for c in log[idx:idx_end]])
             errmsg = log[idx:idx_end]
-            errmsg = errmsg.replace('\n','')
+            errmsg = errmsg.replace('\n','').split('Here is how much of')[0]
             error_dialog = QErrorMessage()
             reply = QMessageBox.critical(
             self, "Error in Compilation",
@@ -326,13 +390,13 @@ class EditorMainWindow(QMainWindow):
         if bib:
             tex = tex.replace("%#*%bib_",'\\bibliography{temp}')
         
-        tex = tex.replace('%#*%content_',self.texEditor.text()).replace('%#*%packages_',self.pkgEditor.text())
+        tex = tex.replace('%#*%content_',self.inc_tex).replace('%#*%packages_',self.pkgEditor.text()+ self.inc_pkg)
         tex = tex.replace('\r','')
         f = open("./resources/compile/temp.tex", "w")
         f.write(tex)
         f.close()
         f = open("./resources/compile/temp.bib", "w")
-        f.write(self.bibEditor.text())
+        f.write(self.bibEditor.text()+self.inc_bib)
         f.close()
 
         idx = self.file.rfind('/')
@@ -511,6 +575,8 @@ class EditorMainWindow(QMainWindow):
         self.helpMenu.addAction(self.compileAbout)
         db = database()
         db.open()
+        q = db.query("select * from DOCCLASS")
+        print(q)
         r = db.getRecentFiles()
         self.recent = r
         db.close()
@@ -846,6 +912,7 @@ class EditorMainWindow(QMainWindow):
 
 
 if __name__ == '__main__':
+
     app = QApplication(sys.argv)
     QApplication.setStyle(QStyleFactory.create('Fusion'))
     myGUI = EditorMainWindow()

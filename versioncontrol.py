@@ -50,20 +50,24 @@ class database():
              PRIMARY KEY (classname));''')
             
             print("Table DOCCLASS Created")
-        except:
-            pass
-        '''
-        cmd  = f"INSERT INTO DOCCLASS (classname, classfile) \
+
+            cmd  = f"INSERT INTO DOCCLASS (classname, classfile) \
                     VALUES ('IEEE Transaction', 'IEEEtran' )"
 
-        self.conn.execute(cmd);
+            self.conn.execute(cmd);
 
-        cmd  = f"INSERT INTO DOCCLASS (classname, classfile) \
-                    VALUES ('IISc Thesis Chapter', 'iiscthes' )"
+            cmd  = f"INSERT INTO DOCCLASS (classname, classfile) \
+                        VALUES ('IISc Thesis Chapter', 'iiscthes' )"
 
-        self.conn.execute(cmd);
+            self.conn.execute(cmd);
 
-        '''
+        
+        except:
+            pass
+        
+        
+
+        
 
     def create_version(self, fname, comment):
         now = datetime.now()
